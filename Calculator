@@ -1,0 +1,304 @@
+ .MODEL SMALL
+    .STACK 100H
+    .DATA
+    
+    MG1 DB 10, 13, 'PRESS + FOR ADDITION$'
+    MG2 DB 10, 13, 'PRESS - FOR SUBSTRACTION$'
+    MG3 DB 10, 13, 'PRESS * FOR MULTIPLICATION$' 
+    MG4 DB 10, 13, 'PRESS / FOR DIVISION$'
+    MG5 DB 10, 13, 'PRESS % FOR MODULUS$'
+    MG6 DB 10, 13, 'WRONG!! PLEASE CHOICE CORRECT.$'
+    MG7 DB 10, 13, 'PRESS 0 FOR EXIT.$'
+    
+    E1 DB 10, 13, 'ENTER YOUR 1ST NUMBER: $'
+    E2 DB 10, 13, 'ENTER YOUR 2ND NUMBER: $'
+    E3 DB 10, 13, 'YOUR RESULT IS: $'
+    E4 DB 10, 13, 'ENTER YOUR CHOICE: $' 
+    
+    NUM1 DB ?
+    NUM2 DB ?
+    RESULT DB ?
+    R DB ?
+    
+    V1 DW ?
+    V2 DW ?
+    
+    .CODE
+    
+    MAIN PROC
+        MOV AX,@DATA
+        MOV DS, AX
+        
+        MOV AH, 9
+        LEA DX, MG1
+        INT 21H
+        LEA DX, MG2
+        INT 21H
+        LEA DX, MG3
+        INT 21H
+        LEA DX, MG4
+        INT 21H
+        LEA DX, MG5
+        INT 21H
+        LEA DX, MG7
+        INT 21H
+     
+        
+        MOV AH, 2
+        MOV DL, 10
+        INT 21H
+        MOV DL, 13
+        INT 21H 
+        
+        MOV AH, 9
+        LEA DX, E4
+        INT 21H
+        
+        MOV AH, 1  
+        INT 21H
+        MOV R,AL
+                  
+        
+        
+        CMP R, '+'
+        JE LSUM   
+        CMP R, '-'
+        JE LSUB
+        CMP R, '*'
+        JE LMUL
+        CMP R, '/'
+        JE LDIV
+        CMP R, '%'
+        JE LMOD 
+        CMP R, '0'
+        JE EXIT
+      
+        MOV AH, 9
+        LEA DX, MG6
+        INT 21H          
+        
+        MOV AH, 2
+        MOV DL, 10
+        INT 21H
+        MOV DL, 13
+        INT 21H  
+        
+        JMP MAIN
+        
+        LSUM:  
+        
+             MOV AH, 9
+             LEA DX, E1
+             INT 21H   
+             
+             MOV AH, 1
+             INT 21H 
+             MOV NUM1, AL
+             
+             MOV AH, 9
+             LEA DX, E2
+             INT 21H
+             
+             MOV AH, 1
+             INT 21H  
+             MOV BL, AL
+             
+             ADD BL, NUM1
+             SUB BL, 48
+             
+             MOV AH, 9
+             LEA DX, E3
+             INT 21H
+             
+             MOV AH, 2
+             MOV DL, BL
+             INT 21H    
+             
+             MOV AH, 2
+             MOV DL, 10
+             INT 21H
+             MOV DL, 13
+             INT 21H
+             
+             JMP MAIN
+             
+        
+        LSUB: 
+             MOV AH, 9
+             LEA DX, E1
+             INT 21H   
+             
+             MOV AH, 1
+             INT 21H 
+             MOV NUM1, AL
+             
+             MOV AH, 9
+             LEA DX, E2
+             INT 21H
+             
+             MOV AH, 1
+             INT 21H  
+             MOV BL, AL
+             
+             SUB NUM1, BL
+             ADD NUM1, 48
+             
+             MOV AH, 9
+             LEA DX, E3
+             INT 21H
+             
+             MOV AH, 2
+             MOV DL, NUM1
+             INT 21H    
+             
+             MOV AH, 2
+             MOV DL, 10
+             INT 21H
+             MOV DL, 13
+             INT 21H
+             
+             JMP MAIN
+        
+        LMUL:
+            
+             MOV AH, 9
+             LEA DX, E1
+             INT 21H   
+             
+             MOV AH, 1
+             INT 21H 
+             SUB AL, 48
+             MOV NUM1, AL
+             
+             MOV AH, 9
+             LEA DX, E2
+             INT 21H
+             
+             MOV AH, 1
+             INT 21H  
+             SUB AL, 48
+             
+             MUL NUM1  
+              
+             AAM
+             ADD AH, 48
+             ADD AL, 48
+             
+             MOV BX, AX
+             
+             MOV AH, 9
+             LEA DX, E3
+             INT 21H
+             
+             MOV AH, 2
+             MOV DL, BH
+             INT 21H
+             MOV DL, BL
+             INT 21H    
+             
+             MOV AH, 2
+             MOV DL, 10
+             INT 21H
+             MOV DL, 13
+             INT 21H
+             JMP MAIN  
+             
+        LDIV:
+        
+             MOV AH, 9
+             LEA DX, E1
+             INT 21H 
+             
+             MOV AX, 0
+             MOV BX, 0
+             MOV CX, 0
+             MOV DX, 0  
+             
+             MOV AH, 1
+             INT 21H 
+             SUB AL, 48
+             MOV CL, AL
+             
+             MOV AH, 9
+             LEA DX, E2
+             INT 21H
+             
+             MOV AH, 1
+             INT 21H  
+             SUB AL, 48
+             MOV BL, AL
+             
+             MOV AX, CX  
+             
+             DIV BL  
+               
+             MOV CX, AX 
+             ADD CL, 48
+             
+             MOV AH, 9
+             LEA DX, E3
+             INT 21H
+             
+             MOV AH, 2
+             MOV DL, CL
+             INT 21H
+             
+             MOV AH, 2
+             MOV DL, 10
+             INT 21H
+             MOV DL, 13
+             INT 21H
+             JMP MAIN
+        
+        LMOD:
+            
+             MOV AH, 9
+             LEA DX, E1
+             INT 21H 
+             
+             MOV AX, 0
+             MOV BX, 0
+             MOV CX, 0
+             MOV DX, 0  
+             
+             MOV AH, 1
+             INT 21H 
+             SUB AL, 48
+             MOV CL, AL
+             
+             MOV AH, 9
+             LEA DX, E2
+             INT 21H
+             
+             MOV AH, 1
+             INT 21H  
+             SUB AL, 48
+             MOV BL, AL
+             
+             MOV AX, CX  
+             
+             DIV BL  
+               
+             MOV CX, AX 
+             ADD CH, 48
+             
+             MOV AH, 9
+             LEA DX, E3
+             INT 21H
+             
+             MOV AH, 2
+             MOV DL, CH
+             INT 21H
+             
+             MOV AH, 2
+             MOV DL, 10
+             INT 21H
+             MOV DL, 13
+             INT 21H
+             JMP MAIN
+   
+        EXIT:
+        MOV AH, 4CH
+        INT 21H
+        MAIN ENDP
+    END MAIN
